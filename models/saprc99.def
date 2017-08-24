@@ -57,14 +57,14 @@
      
 #INLINE F77_INIT
         TSTART = 12.0D0*3600.0D0
-        TEND   = TSTART + 120.0D0*3600.0D0
+        TEND   = TSTART + 50*120.0D0*3600.0D0
         DT     = 3600.D0
         TEMP   = 300.0D0
 #ENDINLINE   
    
 #INLINE F90_INIT
         TSTART = 12.0d0*3600.0d0
-        TEND   = TSTART + 120.0d0*3600.0d0
+        TEND   = TSTART + 50*120.0d0*3600.0d0
         DT     = 3600.d0
         TEMP   = 300.0d0
 #ENDINLINE   
@@ -79,7 +79,7 @@
      
 #INLINE C_INIT
    TSTART = 12.0*3600.0;
-   TEND   = TSTART + 120.0*3600.0;
+   TEND   = TSTART + 50*120.0*3600.0;
    DT     = 3600.0;
    TEMP   = 300.0;
 #ENDINLINE   
