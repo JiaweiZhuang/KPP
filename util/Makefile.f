@@ -5,9 +5,9 @@ FC_INTEL   = ifort
 FOPT_INTEL = -O -f77rtl -mp -pc80 -prec_div -tpp7
 FC_PGF     = pgf77
 FOPT_PGF   = -O -fast -pc 80 -Kieee
-FC_GNU     = g77
+FC_GNU     = gfortran
 FOPT_GNU   = -O -Wall -Wimplicit -ffast-math -funroll-loops \
-	         -malign-double -ffortran-bounds-check
+	         -malign-double
 FC_HPUX    = f90
 FOPT_HPUX  = -O
 
@@ -47,7 +47,7 @@ OBJ =   KPP_ROOT_Main.o      KPP_ROOT_Integrator.o   \
 	KPP_ROOT_Stoichiom.o KPP_ROOT_Util.o         \
 	KPP_ROOT_Monitor.o
 
-all:    exe mex
+all:    exe
 
 exe:	$(HEADERS) $(SPOBJ) $(OBJ)
 	$(FC) $(FOPT) $(SPOBJ) $(OBJ) $(MATHLIB) -o KPP_ROOT.exe
