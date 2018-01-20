@@ -35,3 +35,6 @@ src/y.tab.h
 *.exe
 *.out
 *.app
+
+# Mac OS
+.DS_Store
