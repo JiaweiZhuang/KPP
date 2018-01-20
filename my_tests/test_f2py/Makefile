@@ -19,7 +19,7 @@ FC_LAHEY   = lf95
 # More checking for debugging:
 FOPT_LAHEY = -Cpp --chk a,e,s,u --pca --ap -O0 -g --trap --trace --chkglobal
 
-FC_INTEL   = ifort 
+FC_INTEL   = ifort
 # More aggressive for production runs:
 #FOPT_INTEL = -cpp -O -fp-model precise -pc80 -prec_div
 # More checking for debugging:
@@ -46,20 +46,20 @@ FOPT = $(FOPT_$(COMPILER)) # -DFULL_ALGEBRA
 LIBS =
 #LIBS = -llapack -lblas
 
-# Command to create Matlab mex gateway routines 
+# Command to create Matlab mex gateway routines
 # Note: use $(FC) as the mex Fortran compiler
 MEX  = mex
 
 GENSRC = ros_Precision.f90  \
 	 ros_Parameters.f90     \
-	 ros_Global.f90  
+	 ros_Global.f90
 
 GENOBJ = ros_Precision.o    \
 	 ros_Parameters.o       \
-	 ros_Global.o     
+	 ros_Global.o
 
-FUNSRC = ros_Function.f90 
-FUNOBJ = ros_Function.o 
+FUNSRC = ros_Function.f90
+FUNOBJ = ros_Function.o
 
 JACSRC = ros_JacobianSP.f90  ros_Jacobian.f90
 JACOBJ = ros_JacobianSP.o    ros_Jacobian.o
@@ -67,20 +67,23 @@ JACOBJ = ros_JacobianSP.o    ros_Jacobian.o
 HESSRC = ros_HessianSP.f90   ros_Hessian.f90
 HESOBJ = ros_HessianSP.o     ros_Hessian.o
 
-STMSRC = ros_StoichiomSP.f90 ros_Stoichiom.f90 
+STMSRC = ros_StoichiomSP.f90 ros_Stoichiom.f90
 STMOBJ = ros_StoichiomSP.o   ros_Stoichiom.o
 
 UTLSRC = ros_Rates.f90 ros_Util.f90 ros_Monitor.f90
 UTLOBJ = ros_Rates.o   ros_Util.o   ros_Monitor.o
 
-LASRC  = ros_LinearAlgebra.f90 
-LAOBJ  = ros_LinearAlgebra.o   
+LASRC  = ros_LinearAlgebra.f90
+LAOBJ  = ros_LinearAlgebra.o
 
-STOCHSRC = ros_Stochastic.f90 
-STOCHOBJ = ros_Stochastic.o 
+STOCHSRC = ros_Stochastic.f90
+STOCHOBJ = ros_Stochastic.o
 
 MAINSRC = ros_Main.f90   ros_Initialize.f90   ros_Integrator.f90 ros_Model.f90
-MAINOBJ = ros_Main.o     ros_Initialize.o     ros_Integrator.o   ros_Model.o 
+MAINOBJ = ros_Main.o     ros_Initialize.o     ros_Integrator.o   ros_Model.o
+
+SUBMAINSRC = ros_Initialize.f90   ros_Integrator.f90 ros_Model.f90
+SUBMAINOBJ = ros_Initialize.o     ros_Integrator.o   ros_Model.o
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # User: modify the line below to include only the
@@ -93,10 +96,32 @@ ALLOBJ = $(GENOBJ) $(FUNOBJ) $(JACOBJ) $(HESOBJ) $(STMOBJ) \
 # User: modify the line below to include only the
 #       executables needed by your application
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-all:    exe
+all:  kpp4py
 
-exe:	$(ALLOBJ) $(MAINOBJ) 
+exe:	$(ALLOBJ) $(MAINOBJ)
 	$(FC) $(FOPT) $(ALLOBJ) $(MAINOBJ) $(LIBS) -o ros.exe
+
+### == testing f2py== ###
+
+# pack everything except MAINOBJ into a single static lib
+libmyutil.a: $(ALLOBJ) $(SUBMAINOBJ)
+	ar rsc $@ $^
+
+# test the above packing (still use original main)
+exe2: ros_Main.o libmyutil.a
+	$(FC) $(FOPT) ros_Main.o libmyutil.a $(LIBS) -o ros_from_lib.exe
+
+# now try a different main.F90
+main_with_sub.o: main_with_sub.f90 $(ALLOBJ) $(SUBMAINOBJ)
+	$(FC) $(FOPT) -c $<
+
+exe3: main_with_sub.o libmyutil.a
+	$(FC) $(FOPT) main_with_sub.o libmyutil.a $(LIBS) -o main_with_sub.exe
+
+kpp4py: main_with_sub.f90 libmyutil.a
+		f2py -c -m $@ main_with_sub.f90 libmyutil.a
+
+### ==end testing f2py== ###
 
 stochastic:$(ALLOBJ) $(STOCHOBJ) $(MAINOBJ)
 	$(FC) $(FOPT) $(ALLOBJ) $(STOCHOBJ) $(MAINOBJ) $(LIBS) \
@@ -108,7 +133,7 @@ mex:    $(ALLOBJ)
 	$(MEX) FC#$(FC) -fortran -O ros_mex_Hessian.f90 $(ALLOBJ)
 
 clean:
-	rm -f ros*.o ros*.mod \
+	rm -f *.a *.exe ros*.o ros*.mod \
 	ros*.dat ros.exe ros*.mexglx \
 	ros.map
 
@@ -117,7 +142,7 @@ distclean:
 	ros*.dat ros.exe ros.map \
 	ros*.f90 ros_*.mexglx
 
-ros_Precision.o: ros_Precision.f90 
+ros_Precision.o: ros_Precision.f90
 	$(FC) $(FOPT) -c $<
 
 ros_Parameters.o: ros_Parameters.f90 \
@@ -132,13 +157,13 @@ ros_Global.o: ros_Global.f90 \
 	            ros_Parameters.o ros_Precision.o
 	$(FC) $(FOPT) -c $<
 
-ros_Initialize.o: ros_Initialize.f90  $(GENOBJ) 
+ros_Initialize.o: ros_Initialize.f90  $(GENOBJ)
 	$(FC) $(FOPT) -c $<
 
-ros_Function.o: ros_Function.f90  $(GENOBJ) 
+ros_Function.o: ros_Function.f90  $(GENOBJ)
 	$(FC) $(FOPT) -c $<
 
-ros_Stochastic.o: ros_Stochastic.f90  $(GENOBJ) 
+ros_Stochastic.o: ros_Stochastic.f90  $(GENOBJ)
 	$(FC) $(FOPT) -c $<
 
 ros_JacobianSP.o: ros_JacobianSP.f90 $(GENOBJ)
@@ -150,7 +175,7 @@ ros_Jacobian.o: ros_Jacobian.f90  $(GENOBJ) ros_JacobianSP.o
 ros_LinearAlgebra.o: ros_LinearAlgebra.f90 $(GENOBJ) ros_JacobianSP.o
 	$(FC) $(FOPT) -c $<
 
-ros_Rates.o: ros_Rates.f90  $(GENOBJ) 
+ros_Rates.o: ros_Rates.f90  $(GENOBJ)
 	$(FC) $(FOPT) -c $<
 
 ros_HessianSP.o: ros_HessianSP.f90  $(GENOBJ)
