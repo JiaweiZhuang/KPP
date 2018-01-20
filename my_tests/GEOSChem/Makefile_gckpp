@@ -64,11 +64,11 @@ FUNOBJ = gckpp_Function.o
 JACSRC = gckpp_JacobianSP.f90  gckpp_Jacobian.f90
 JACOBJ = gckpp_JacobianSP.o    gckpp_Jacobian.o
 
-HESSRC = gckpp_HessianSP.f90   gckpp_Hessian.f90
-HESOBJ = gckpp_HessianSP.o     gckpp_Hessian.o
+#HESSRC = gckpp_HessianSP.f90   gckpp_Hessian.f90
+#HESOBJ = gckpp_HessianSP.o     gckpp_Hessian.o
 
-STMSRC = gckpp_StoichiomSP.f90 gckpp_Stoichiom.f90 
-STMOBJ = gckpp_StoichiomSP.o   gckpp_Stoichiom.o
+#STMSRC = gckpp_StoichiomSP.f90 gckpp_Stoichiom.f90 
+#STMOBJ = gckpp_StoichiomSP.o   gckpp_Stoichiom.o
 
 UTLSRC = gckpp_Rates.f90 gckpp_Util.f90 gckpp_Monitor.f90
 UTLOBJ = gckpp_Rates.o   gckpp_Util.o   gckpp_Monitor.o
@@ -86,7 +86,7 @@ MAINOBJ = gckpp_Main.o     gckpp_Initialize.o     gckpp_Integrator.o   gckpp_Mod
 # User: modify the line below to include only the
 #       objects needed by your application
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ALLOBJ = $(GENOBJ) $(FUNOBJ) $(JACOBJ) $(HESOBJ) $(STMOBJ) \
+ALLOBJ = $(GENOBJ) $(FUNOBJ) $(JACOBJ) \
 	 $(UTLOBJ) $(LAOBJ)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -153,17 +153,17 @@ gckpp_LinearAlgebra.o: gckpp_LinearAlgebra.f90 $(GENOBJ) gckpp_JacobianSP.o
 gckpp_Rates.o: gckpp_Rates.f90  $(GENOBJ) 
 	$(FC) $(FOPT) -c $<
 
-gckpp_HessianSP.o: gckpp_HessianSP.f90  $(GENOBJ)
-	$(FC) $(FOPT) -c $<
+#gckpp_HessianSP.o: gckpp_HessianSP.f90  $(GENOBJ)
+#	$(FC) $(FOPT) -c $<
 
-gckpp_Hessian.o:  gckpp_Hessian.f90 $(GENOBJ) gckpp_HessianSP.o
-	$(FC) $(FOPT) -c $<
+#gckpp_Hessian.o:  gckpp_Hessian.f90 $(GENOBJ) gckpp_HessianSP.o
+#	$(FC) $(FOPT) -c $<
 
-gckpp_StoichiomSP.o: gckpp_StoichiomSP.f90 $(GENOBJ)
-	$(FC) $(FOPT) -c $<
+#gckpp_StoichiomSP.o: gckpp_StoichiomSP.f90 $(GENOBJ)
+#	$(FC) $(FOPT) -c $<
 
-gckpp_Stoichiom.o: gckpp_Stoichiom.f90  $(GENOBJ) gckpp_StoichiomSP.o
-	$(FC) $(FOPT) -c $<
+#gckpp_Stoichiom.o: gckpp_Stoichiom.f90  $(GENOBJ) gckpp_StoichiomSP.o
+#	$(FC) $(FOPT) -c $<
 
 gckpp_Util.o: gckpp_Util.f90  $(GENOBJ) gckpp_Monitor.o
 	$(FC) $(FOPT) -c $<
