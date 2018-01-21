@@ -38,3 +38,7 @@ src/y.tab.h
 
 # Mac OS
 .DS_Store
+
+# data
+*.dat
+*.nc
