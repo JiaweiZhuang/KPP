@@ -109,8 +109,7 @@ mex:    $(ALLOBJ)
 
 clean:
 	rm -f gckpp*.o gckpp*.mod \
-	gckpp*.dat gckpp.exe gckpp*.mexglx \
-	gckpp.map
+	gckpp*.dat gckpp.exe gckpp*.mexglx
 
 distclean:
 	rm -f gckpp*.o gckpp*.mod \
