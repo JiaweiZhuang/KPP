@@ -36,8 +36,12 @@ FOPT_PGF   = -Mpreprocess -O -fast -pc 80 -Kieee
 FC_HPUX    = f90
 FOPT_HPUX  = -O -u +Oall +check=on
 
+
+# Must use "-mcmodel=medium" to avoid "relocation truncated to fit: R_X86_64_PC32..."
+# https://cboard.cprogramming.com/c-programming/167903-relocation-truncated-fit-r_x86_64_pc32-against-symbol-defined-common.html
 FC_GFORTRAN     = gfortran
-FOPT_GFORTRAN   = -cpp -O
+FOPT_GFORTRAN   = -cpp -O -Wall -mcmodel=medium
+NETCDF_FLAG     = -I$(NETCDF_HOME)/include -L$(NETCDF_HOME)/lib -lnetcdff -lnetcdf
 
 # define FULL_ALGEBRA for non-sparse integration
 FC   = $(FC_$(COMPILER))
@@ -95,8 +99,10 @@ ALLOBJ = $(GENOBJ) $(FUNOBJ) $(JACOBJ) \
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 all:    exe
 
+# -lnetcdff must be on the rightmost position
+# https://stackoverflow.com/questions/13941549/compiling-fortran-netcdf-programs-on-ubuntu
 exe:	$(ALLOBJ) $(MAINOBJ) 
-	$(FC) $(FOPT) $(ALLOBJ) $(MAINOBJ) $(LIBS) -o gckpp.exe
+	$(FC) -o gckpp.exe $(FOPT) $(ALLOBJ) $(MAINOBJ) $(LIBS) $(NETCDF_FLAG)
 
 stochastic:$(ALLOBJ) $(STOCHOBJ) $(MAINOBJ)
 	$(FC) $(FOPT) $(ALLOBJ) $(STOCHOBJ) $(MAINOBJ) $(LIBS) \
@@ -168,7 +174,7 @@ gckpp_Util.o: gckpp_Util.f90  $(GENOBJ) gckpp_Monitor.o
 	$(FC) $(FOPT) -c $<
 
 gckpp_Main.o: gckpp_Main.f90  $(ALLOBJ) gckpp_Initialize.o gckpp_Model.o gckpp_Integrator.o
-	$(FC) $(FOPT) -c $<
+	$(FC) $(FOPT) -c $< $(NETCDF_FLAG)
 
 gckpp_Model.o: gckpp_Model.f90  $(ALLOBJ) gckpp_Integrator.o
 	$(FC) $(FOPT) -c $<
