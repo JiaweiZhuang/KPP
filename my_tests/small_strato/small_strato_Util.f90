@@ -75,7 +75,7 @@ CONTAINS
 
       INTEGER i
 
-      WRITE(10,999) (TIME-TSTART)/3600.D0,  &
+      WRITE(10,999) (TIME-TSTART)/3600.D0, SUN,  &
                    (C(LOOKAT(i))/CFACTOR, i=1,NLOOKAT)
 999   FORMAT(E24.16,100(1X,E24.16))
 
@@ -231,4 +231,3 @@ END SUBROUTINE GetMass
 
 
 END MODULE small_strato_Util
-
