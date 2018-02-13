@@ -38,3 +38,9 @@ src/y.tab.h
 
 # Mac OS
 .DS_Store
+
+# data
+*.dat
+
+# notebook
+.ipynb_checkpoints
