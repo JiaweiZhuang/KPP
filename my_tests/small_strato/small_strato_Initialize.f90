@@ -70,7 +70,7 @@ SUBROUTINE Initialize ( )
 ! INLINED initializations
 
         TSTART = (12*3600)
-        TEND = TSTART + (3*24*3600)
+        TEND = TSTART + (3*24*3600)*10
         DT = 0.25*3600  
         TEMP = 270
 
@@ -85,4 +85,3 @@ END SUBROUTINE Initialize
 
 
 END MODULE small_strato_Initialize
-
