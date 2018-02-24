@@ -1,0 +1,4 @@
+#MODEL      small_strato
+#LANGUAGE   Fortran77
+#INTEGRATOR rosenbrock
+#DRIVER     general
