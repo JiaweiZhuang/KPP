@@ -1,0 +1,109 @@
+# Set here the Fortran77 compiler and the desired optimization options
+COMPILER = GNU
+
+FC_INTEL   = ifort
+FOPT_INTEL = -O -f77rtl -mp -pc80 -prec_div -tpp7
+FC_PGF     = pgf77
+FOPT_PGF   = -O -fast -pc 80 -Kieee
+FC_GNU     = gfortran
+FOPT_GNU   = -O -Wall -Wimplicit -ffast-math -funroll-loops \
+	         -malign-double
+FC_HPUX    = f90
+FOPT_HPUX  = -O
+
+FC   = $(FC_$(COMPILER))
+FOPT = $(FOPT_$(COMPILER)) 
+
+# Mathematical libraries: blas and lapack
+# MATHLIB   = -L/usr/local/lib  -llapack_g77  -L/usr/lib -lblas_g77
+MATHLIB   = -llapack  -lblas 
+
+# To create Matlab mex gateway routines
+# Note: use $(FC) as the mex Fortran compiler
+MEX  = mex
+
+HEADERS = small_strato_Global.h  small_strato_Parameters.h  small_strato_Sparse.h
+
+SPSRC = small_strato_JacobianSP.f \
+	small_strato_HessianSP.f  \
+	small_strato_StoichiomSP.f
+
+SPOBJ = small_strato_JacobianSP.o \
+	small_strato_HessianSP.o  \
+	small_strato_StoichiomSP.o
+
+
+SRC =   small_strato_Main.f      small_strato_Integrator.f   \
+        small_strato_Function.f  small_strato_Initialize.f   \
+	small_strato_Jacobian.f  small_strato_LinearAlgebra.f\
+	small_strato_Rates.f     small_strato_Hessian.f      \
+	small_strato_Stoichiom.f small_strato_Util.f         \
+	small_strato_Monitor.f   
+
+OBJ =   small_strato_Main.o      small_strato_Integrator.o   \
+        small_strato_Function.o  small_strato_Initialize.o   \
+	small_strato_Jacobian.o  small_strato_LinearAlgebra.o\
+	small_strato_Rates.o     small_strato_Hessian.o      \
+	small_strato_Stoichiom.o small_strato_Util.o         \
+	small_strato_Monitor.o
+
+all:    exe
+
+exe:	$(HEADERS) $(SPOBJ) $(OBJ)
+	$(FC) $(FOPT) $(SPOBJ) $(OBJ) $(MATHLIB) -o small_strato.exe
+
+mex:    $(HEADERS) $(SPOBJ) $(OBJ)
+	$(MEX) FC#$(FC) -fortran -O small_strato_mex_Fun.f     $(SPOBJ) $(OBJ)
+	$(MEX) FC#$(FC) -fortran -O small_strato_mex_Jac_SP.f  $(SPOBJ) $(OBJ)
+	$(MEX) FC#$(FC) -fortran -O small_strato_mex_Hessian.f $(SPOBJ) $(OBJ)
+	
+clean:
+	rm -f $(SPOBJ) $(OBJ) small_strato.exe small_strato.map  \
+	small_strato.dat 
+
+distclean:
+	rm -f $(SPOBJ) $(OBJ) small_strato.exe small_strato.map  \
+	small_strato.dat small_strato*.f  small_strato*.h 
+
+small_strato_Monitor.o: small_strato_Monitor.f $(HEADERS)
+	$(FC) $(FOPT) -c $<
+
+small_strato_JacobianSP.o: small_strato_JacobianSP.f $(HEADERS)
+	$(FC) $(FOPT) -c $<
+
+small_strato_HessianSP.o: small_strato_HessianSP.f  $(HEADERS)
+	$(FC) $(FOPT) -c $<
+
+small_strato_StoichiomSP.o: small_strato_StoichiomSP.f $(HEADERS)
+	$(FC) $(FOPT) -c $<
+
+small_strato_Main.o: small_strato_Main.f  small_strato_Initialize.o $(HEADERS) $(SPOBJ)
+	$(FC) $(FOPT) -c $<
+
+small_strato_Integrator.o: small_strato_Integrator.f  $(HEADERS) $(SPOBJ)
+	$(FC) $(FOPT) -c $<
+
+small_strato_Initialize.o: small_strato_Initialize.f  $(HEADERS) $(SPOBJ)
+	$(FC) $(FOPT) -c $<
+
+small_strato_Function.o: small_strato_Function.f  $(HEADERS) $(SPOBJ)
+	$(FC) $(FOPT) -c $<
+
+small_strato_Jacobian.o: small_strato_Jacobian.f  $(HEADERS) $(SPOBJ)
+	$(FC) $(FOPT) -c $<
+
+small_strato_LinearAlgebra.o: small_strato_LinearAlgebra.f  $(HEADERS) $(SPOBJ)
+	$(FC) $(FOPT) -c $<
+
+small_strato_Rates.o: small_strato_Rates.f  $(HEADERS) $(SPOBJ)
+	$(FC) $(FOPT) -c $<
+
+small_strato_Hessian.o:  small_strato_Hessian.f $(HEADERS) $(SPOBJ)
+	$(FC) $(FOPT) -c $<
+
+small_strato_Stoichiom.o: small_strato_Stoichiom.f  $(HEADERS) $(SPOBJ)
+	$(FC) $(FOPT) -c $<
+
+small_strato_Util.o: small_strato_Util.f  $(HEADERS) $(SPOBJ)
+	$(FC) $(FOPT) -c $<
+
