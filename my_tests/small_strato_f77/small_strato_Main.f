@@ -47,10 +47,10 @@ C ---- TIME VARIABLES ------------------
       STEPMIN = 0.01
       STEPMAX = 900
 
-      RTOLS = 1e-3
+      RTOLS = 1e-4
       DO i=1,NVAR
         RTOL(i) = RTOLS
-        ATOL(i) = 1
+        ATOL(i) = 1e-3
       END DO
      
       CALL Initialize()
@@ -103,5 +103,3 @@ C *********** END TIME LOOP ********
 
 C End of MAIN function                                             
 C ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
