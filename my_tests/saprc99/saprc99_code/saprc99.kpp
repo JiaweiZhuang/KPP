@@ -1,0 +1,4 @@
+#MODEL      saprc99
+#LANGUAGE   Fortran90
+#INTEGRATOR rosenbrock
+#DRIVER     general
