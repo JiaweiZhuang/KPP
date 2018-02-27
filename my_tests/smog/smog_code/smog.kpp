@@ -1,0 +1,4 @@
+#MODEL      smog
+#LANGUAGE   Fortran90
+#INTEGRATOR rosenbrock
+#DRIVER     general
