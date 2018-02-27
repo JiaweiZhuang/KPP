@@ -41,6 +41,7 @@ src/y.tab.h
 
 # data
 *.dat
+*.data
 
 # notebook
 .ipynb_checkpoints
