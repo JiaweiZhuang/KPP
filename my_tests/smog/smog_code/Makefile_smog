@@ -107,6 +107,9 @@ libmyutil.a: $(ALLOBJ) $(SUBMAINOBJ)
 exe2: smog_Main.o libmyutil.a
 	$(FC) $(FOPT) smog_Main.o libmyutil.a $(LIBS) -o smog_from_lib.exe
 
+kpp4py: kpp4py_driver.f90 libmyutil.a
+	f2py -c -m $@ kpp4py_driver.f90 libmyutil.a
+
 exe:	$(ALLOBJ) $(MAINOBJ) 
 	$(FC) $(FOPT) $(ALLOBJ) $(MAINOBJ) $(LIBS) -o smog.exe
 
@@ -122,7 +125,7 @@ mex:    $(ALLOBJ)
 clean:
 	rm -f smog*.o smog*.mod \
 	smog*.dat smog.exe smog*.mexglx \
-	*.exe
+	*.exe *.a
 
 distclean:
 	rm -f smog*.o smog*.mod \
