@@ -79,7 +79,7 @@ SUBROUTINE Initialize ( )
 ! INLINED initializations
 
 	TSTART = 0
-	TEND = TSTART + 600
+	TEND = TSTART + 600*3
 	DT = 60.0
         TEMP = 298
 
@@ -94,4 +94,3 @@ END SUBROUTINE Initialize
 
 
 END MODULE smog_Initialize
-
