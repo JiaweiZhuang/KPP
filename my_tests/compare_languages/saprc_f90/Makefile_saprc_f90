@@ -41,7 +41,7 @@ FC_GFORTRAN     = gfortran
 # Use GEOS-Chem flag
 FOPT_GFORTRAN   = -cpp -w -std=legacy -fautomatic -fno-align-commons \
                 -fconvert=big-endian -fno-range-check -O3 -funroll-loops \
-                                -fopenmp -mcmodel=medium -fbacktrace -g # -ffast-math
+                                -fopenmp -mcmodel=medium -fbacktrace -g -ffast-math
 
 # define FULL_ALGEBRA for non-sparse integration
 FC   = $(FC_$(COMPILER))

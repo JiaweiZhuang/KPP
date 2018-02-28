@@ -10,7 +10,7 @@ FC_GNU     = gfortran
 # use GEOS-Chem settings
 FOPT_GNU   = -cpp -w -std=legacy -fautomatic -fno-align-commons \
                 -fconvert=big-endian -fno-range-check -O3 -funroll-loops \
-                                -fopenmp -mcmodel=medium -fbacktrace -g # -ffast-math
+                                -fopenmp -mcmodel=medium -fbacktrace -g -ffast-math
 FC_HPUX    = f90
 FOPT_HPUX  = -O
 
