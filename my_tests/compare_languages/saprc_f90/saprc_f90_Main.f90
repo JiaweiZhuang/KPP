@@ -35,18 +35,22 @@ PROGRAM saprc_f90_Driver
   USE saprc_f90_Initialize, ONLY: Initialize
 
       REAL(kind=dp) :: T, DVAL(NSPEC)
-      REAL(kind=dp) :: RSTATE(20)
+      REAL(kind=dp) :: RSTATE(20), RCNTRL(20)
       INTEGER :: i
   
 !~~~> Initialization 
 
-      STEPMIN = 0.0d0
+      STEPMIN = 100.0d0
       STEPMAX = 0.0d0
 
       DO i=1,NVAR
         RTOL(i) = 1.0d-4
         ATOL(i) = 1.0d-3
       END DO
+      
+      !to be safe
+      RCNTRL    = 0.0_dp 
+      RSTATE    = 0.0_dp
      
       CALL Initialize()
       CALL InitSaveData()
@@ -63,10 +67,17 @@ kron: DO WHILE (T < TEND)
         CALL SaveData()
         CALL Update_SUN() 
         CALL Update_RCONST()
+        
+        ! Use the previously predicted time step
+        ! This speed-ups F90 by ~50%, but still 2x slower than F77!
+        RCNTRL(3) = RSTATE(3) 
 
         CALL INTEGRATE( TIN = T, TOUT = T+DT, RSTATUS_U = RSTATE, &
-        ICNTRL_U = (/ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 /) )
+        ICNTRL_U = (/ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 /), &
+        RCNTRL_U = RCNTRL )
         T = RSTATE(1)
+        
+        ! PRINT*, 'RSTATE(3)=', RSTATE(3)
 
       END DO kron
 !~~~> End Time loop
@@ -85,5 +96,3 @@ END PROGRAM saprc_f90_Driver
 
 ! End of MAIN function
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
