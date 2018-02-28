@@ -44,8 +44,8 @@ PROGRAM saprc_f90_Driver
       STEPMAX = 0.0d0
 
       DO i=1,NVAR
-        RTOL(i) = 1.0d-4
-        ATOL(i) = 1.0d-3
+        RTOL(i) = 1.0d-3
+        ATOL(i) = 1.0d0
       END DO
       
       !to be safe
