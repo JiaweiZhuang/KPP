@@ -82,6 +82,10 @@ STOCHOBJ = smog_Stochastic.o
 MAINSRC = smog_Main.f90   smog_Initialize.f90   smog_Integrator.f90 smog_Model.f90
 MAINOBJ = smog_Main.o     smog_Initialize.o     smog_Integrator.o   smog_Model.o 
 
+# MAINOBJ without Main itself
+SUBMAINSRC = smog_Initialize.f90   smog_Integrator.f90 smog_Model.f90
+SUBMAINOBJ = smog_Initialize.o     smog_Integrator.o   smog_Model.o
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # User: modify the line below to include only the
 #       objects needed by your application
@@ -94,6 +98,14 @@ ALLOBJ = $(GENOBJ) $(FUNOBJ) $(JACOBJ) $(HESOBJ) $(STMOBJ) \
 #       executables needed by your application
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 all:    exe
+	
+# pack everything except MAINOBJ into a single static lib
+libmyutil.a: $(ALLOBJ) $(SUBMAINOBJ)
+	ar rsc $@ $^
+	
+# test the above packing (still use original main)
+exe2: smog_Main.o libmyutil.a
+	$(FC) $(FOPT) smog_Main.o libmyutil.a $(LIBS) -o smog_from_lib.exe
 
 exe:	$(ALLOBJ) $(MAINOBJ) 
 	$(FC) $(FOPT) $(ALLOBJ) $(MAINOBJ) $(LIBS) -o smog.exe
@@ -110,7 +122,7 @@ mex:    $(ALLOBJ)
 clean:
 	rm -f smog*.o smog*.mod \
 	smog*.dat smog.exe smog*.mexglx \
-	smog.map
+	*.exe
 
 distclean:
 	rm -f smog*.o smog*.mod \
