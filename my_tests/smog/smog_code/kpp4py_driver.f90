@@ -1,4 +1,4 @@
-SUBROUTINE kpp(y0, y_history)
+SUBROUTINE kpp(y0, n_time, y_history)
 
   USE smog_Model
   USE smog_Initialize, ONLY: Initialize
@@ -8,11 +8,14 @@ SUBROUTINE kpp(y0, y_history)
       REAL(kind=dp) :: RSTATE(20)
       INTEGER :: i
       
-      ! Note: f2py doesn't like custom precision and dynamic array
-      REAL(kind=8) :: y0(12), y_history(12)
+      ! Note: f2py doesn't like custom precision and allocable array
+      ! Also doesn't like y0(NVAR). Need to write size explicitly
+      INTEGER :: n_time
+      REAL(kind=8) :: y0(12), y_history(12, n_time)
 
-      !f2py intent(in) :: y0
+      !f2py intent(in) :: y0, n_time
       !f2py intent(out) :: y_history
+      !f2py depend(n_time) y_history
 
 !~~~> Standard KPP Initialization
 
@@ -33,16 +36,16 @@ SUBROUTINE kpp(y0, y_history)
 !~~~> Time loop
       T = TSTART
 
-kron: DO WHILE (T < TEND)
+      DO i = 1, n_time
 
         TIME = T
         CALL INTEGRATE( TIN = T, TOUT = T+DT, RSTATUS_U = RSTATE, &
         ICNTRL_U = (/ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 /) )
         T = RSTATE(1)
+        
+        y_history(:,i) = VAR
 
-      END DO kron
+      END DO
 !~~~> End Time loop
-
-      y_history = VAR ! TODO: record whole time series
 
 END SUBROUTINE
