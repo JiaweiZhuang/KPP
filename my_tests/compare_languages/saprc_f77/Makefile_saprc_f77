@@ -5,9 +5,12 @@ FC_INTEL   = ifort
 FOPT_INTEL = -O -f77rtl -mp -pc80 -prec_div -tpp7
 FC_PGF     = pgf77
 FOPT_PGF   = -O -fast -pc 80 -Kieee
+
 FC_GNU     = gfortran
-FOPT_GNU   = -O -Wall -Wimplicit -ffast-math -funroll-loops \
-	         -malign-double
+# use GEOS-Chem settings
+FOPT_GNU   = -cpp -w -std=legacy -fautomatic -fno-align-commons \
+                -fconvert=big-endian -fno-range-check -O3 -funroll-loops \
+                                -fopenmp -mcmodel=medium -fbacktrace -g # -ffast-math
 FC_HPUX    = f90
 FOPT_HPUX  = -O
 
