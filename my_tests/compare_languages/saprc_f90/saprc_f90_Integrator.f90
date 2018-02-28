@@ -527,6 +527,8 @@ CONTAINS !  SUBROUTINES internal to Rosenbrock
 TimeLoop: DO WHILE ( (Direction > 0).AND.((T-Tend)+Roundoff <= ZERO) &
        .OR. (Direction < 0).AND.((Tend-T)+Roundoff <= ZERO) )
 
+   print*, 'T=', T, '; H=', H, '; Roundoff=', Roundoff
+
    IF ( ISTATUS(Nstp) > Max_no_steps ) THEN  ! Too many steps
       CALL ros_ErrorMsg(-6,T,H,IERR)
       RETURN
@@ -1361,5 +1363,3 @@ END MODULE saprc_f90_Integrator
 
 ! End of INTEGRATE function
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-

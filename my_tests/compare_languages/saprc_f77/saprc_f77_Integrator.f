@@ -515,6 +515,8 @@ C ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
       DO WHILE ( (Direction.GT.0).AND.((T-Tend)+Roundoff.LE.ZERO)
      &     .OR. (Direction.LT.0).AND.((Tend-T)+Roundoff.LE.ZERO) ) 
+     
+      print*, 'T=', T, '; H=', H, '; Roundoff=', Roundoff
          
       IF ( Nstp.GT.Max_no_steps ) THEN  ! Too many steps
 	CALL ros_ErrorMsg(-6,T,H,IERR)
@@ -1319,5 +1321,3 @@ C ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 C End of INTEGRATE function                                        
 C ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
