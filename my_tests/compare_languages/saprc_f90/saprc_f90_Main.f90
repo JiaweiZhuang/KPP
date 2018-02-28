@@ -70,7 +70,7 @@ kron: DO WHILE (T < TEND)
         
         ! Use the previously predicted time step
         ! This together with the reduced error tolerance closes the gap 
-        ! between F90 and F77 tolerances
+        ! between F90 and F77 performances
         RCNTRL(3) = RSTATE(3) 
 
         CALL INTEGRATE( TIN = T, TOUT = T+DT, RSTATUS_U = RSTATE, &
