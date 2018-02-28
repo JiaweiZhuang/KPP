@@ -44,7 +44,7 @@ PROGRAM saprc_f90_Driver
       STEPMAX = 0.0d0
 
       DO i=1,NVAR
-        RTOL(i) = 1.0d-3
+        RTOL(i) = 1e-3
         ATOL(i) = 1.0d0
       END DO
       
@@ -69,7 +69,8 @@ kron: DO WHILE (T < TEND)
         CALL Update_RCONST()
         
         ! Use the previously predicted time step
-        ! This speed-ups F90 by ~50%, but still 2x slower than F77!
+        ! This together with the reduced error tolerance closes the gap 
+        ! between F90 and F77 tolerances
         RCNTRL(3) = RSTATE(3) 
 
         CALL INTEGRATE( TIN = T, TOUT = T+DT, RSTATUS_U = RSTATE, &
