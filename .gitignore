@@ -45,3 +45,5 @@ src/y.tab.h
 
 # notebook
 .ipynb_checkpoints
+__pycache__
+*.dSYM
