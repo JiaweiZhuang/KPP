@@ -1,6 +1,5 @@
 SUBROUTINE forward(y0, n_time, y_history)
   ! Start from one initial condition and integrate multiple time steps
-
   USE small_strato_Model
   USE small_strato_Initialize, ONLY: Initialize
   USE small_strato_Global, ONLY: VAR, SUN
@@ -24,8 +23,8 @@ SUBROUTINE forward(y0, n_time, y_history)
       STEPMAX = 0.0d0
 
       DO i=1,NVAR
-        RTOL(i) = 1.0d-4
-        ATOL(i) = 1.0d-3
+        RTOL(i) = 1.0d-3
+        ATOL(i) = 1.0d-12
       END DO
 
       CALL Initialize()
@@ -50,6 +49,61 @@ SUBROUTINE forward(y0, n_time, y_history)
         
         y_history(1:5,i) = VAR
         y_history(6,i) = SUN
+
+      END DO
+!~~~> End Time loop
+
+END SUBROUTINE
+
+! ===================================================
+! ===================================================
+
+SUBROUTINE onestep(y0_list, n_sample, y1_list)
+  ! Start from many initial conditions and integrate a single time step
+  USE small_strato_Model
+  USE small_strato_Initialize, ONLY: Initialize
+  USE small_strato_Global, ONLY: VAR, SUN
+
+      REAL(kind=dp) :: T, DVAL(NSPEC)
+      REAL(kind=dp) :: RSTATE(20)
+      INTEGER :: i
+      
+      INTEGER :: n_sample
+      ! The last element in y0 is SUN
+      REAL(kind=8) :: y0_list(6, n_sample), y1_list(6, n_sample)
+
+      !f2py intent(in) :: y0_list, n_sample
+      !f2py intent(out) :: y1_list
+      !f2py intent(hide),depend(y0_list) :: n_sample=shape(y1_list,0)
+      !f2py depend(n_sample) y1_list
+
+!~~~> Standard KPP Initialization
+
+      STEPMIN = 0.0d0
+      STEPMAX = 0.0d0
+
+      DO i=1,NVAR
+        RTOL(i) = 1.0d-3
+        ATOL(i) = 1.0d-12 ! prevent negative concentration
+      END DO
+
+      CALL Initialize()
+      
+      ! Time variables are fixed in this case
+      T = TSTART
+      TIME = T
+      
+!~~~> Loop over different initial conditions
+      DO i = 1, n_sample
+        
+        VAR = y0_list(1:5,i)
+        SUN = y0_list(6,i)
+        CALL Update_RCONST()
+        CALL INTEGRATE( TIN = T, TOUT = T+DT, RSTATUS_U = RSTATE, &
+        ICNTRL_U = (/ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 /) )
+        
+        y1_list(1:5,i) = VAR
+        y1_list(6,i) = SUN
 
       END DO
 !~~~> End Time loop
