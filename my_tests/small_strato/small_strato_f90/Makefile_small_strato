@@ -82,6 +82,10 @@ STOCHOBJ = small_strato_Stochastic.o
 MAINSRC = small_strato_Main.f90   small_strato_Initialize.f90   small_strato_Integrator.f90 small_strato_Model.f90
 MAINOBJ = small_strato_Main.o     small_strato_Initialize.o     small_strato_Integrator.o   small_strato_Model.o 
 
+# MAINOBJ without Main itself
+SUBMAINSRC = small_strato_Initialize.f90   small_strato_Integrator.f90 small_strato_Model.f90
+SUBMAINOBJ = small_strato_Initialize.o     small_strato_Integrator.o   small_strato_Model.o
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # User: modify the line below to include only the
 #       objects needed by your application
@@ -94,6 +98,13 @@ ALLOBJ = $(GENOBJ) $(FUNOBJ) $(JACOBJ) $(HESOBJ) $(STMOBJ) \
 #       executables needed by your application
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 all:    exe
+
+# pack everything except MAINOBJ into a single static lib
+libmyutil.a: $(ALLOBJ) $(SUBMAINOBJ)
+	ar rsc $@ $^
+
+kpp4py: kpp4py_driver.f90 libmyutil.a
+	f2py -c -m $@ kpp4py_driver.f90 libmyutil.a
 
 exe:	$(ALLOBJ) $(MAINOBJ) 
 	$(FC) $(FOPT) $(ALLOBJ) $(MAINOBJ) $(LIBS) -o small_strato.exe
@@ -110,7 +121,7 @@ mex:    $(ALLOBJ)
 clean:
 	rm -f small_strato*.o small_strato*.mod \
 	small_strato*.dat small_strato.exe small_strato*.mexglx \
-	small_strato.map
+	*.exe  *.a
 
 distclean:
 	rm -f small_strato*.o small_strato*.mod \
