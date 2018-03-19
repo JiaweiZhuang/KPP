@@ -82,6 +82,10 @@ STOCHOBJ = strato_Stochastic.o
 MAINSRC = strato_Main.f90   strato_Initialize.f90   strato_Integrator.f90 strato_Model.f90
 MAINOBJ = strato_Main.o     strato_Initialize.o     strato_Integrator.o   strato_Model.o 
 
+# MAINOBJ without Main itself
+SUBMAINSRC = strato_Initialize.f90   strato_Integrator.f90 strato_Model.f90
+SUBMAINOBJ = strato_Initialize.o     strato_Integrator.o   strato_Model.o
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # User: modify the line below to include only the
 #       objects needed by your application
@@ -94,6 +98,13 @@ ALLOBJ = $(GENOBJ) $(FUNOBJ) $(JACOBJ) $(HESOBJ) $(STMOBJ) \
 #       executables needed by your application
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 all:    exe
+
+# pack everything except MAINOBJ into a single static lib
+libmyutil.a: $(ALLOBJ) $(SUBMAINOBJ)
+	ar rsc $@ $^
+
+kpp4py: kpp4py_driver.f90 libmyutil.a
+	f2py -c -m $@ kpp4py_driver.f90 libmyutil.a
 
 exe:	$(ALLOBJ) $(MAINOBJ) 
 	$(FC) $(FOPT) $(ALLOBJ) $(MAINOBJ) $(LIBS) -o strato.exe
