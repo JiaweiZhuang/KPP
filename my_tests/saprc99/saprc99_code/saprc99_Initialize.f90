@@ -103,7 +103,7 @@ SUBROUTINE Initialize ( )
 ! INLINED initializations
 
         TSTART = 12.0d0*3600.0d0
-        TEND   = TSTART + 120.0d0*3600.0d0
+        TEND   = TSTART + 2.0*120.0d0*3600.0d0
         DT     = 3600.d0
         TEMP   = 300.0d0
 
