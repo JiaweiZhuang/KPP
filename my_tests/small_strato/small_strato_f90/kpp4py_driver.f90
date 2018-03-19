@@ -70,7 +70,7 @@ SUBROUTINE onestep(y0_list, n_sample, y1_list)
       
       INTEGER :: n_sample
       ! The last element in y0 is SUN
-      REAL(kind=8) :: y0_list(6, n_sample), y1_list(6, n_sample)
+      REAL(kind=8) :: y0_list(6, n_sample), y1_list(5, n_sample)
 
       !f2py intent(in) :: y0_list, n_sample
       !f2py intent(out) :: y1_list
@@ -102,8 +102,7 @@ SUBROUTINE onestep(y0_list, n_sample, y1_list)
         CALL INTEGRATE( TIN = T, TOUT = T+DT, RSTATUS_U = RSTATE, &
         ICNTRL_U = (/ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 /) )
         
-        y1_list(1:5,i) = VAR
-        y1_list(6,i) = SUN
+        y1_list(:,i) = VAR
 
       END DO
 !~~~> End Time loop
