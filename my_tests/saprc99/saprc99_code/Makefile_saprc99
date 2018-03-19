@@ -82,6 +82,10 @@ STOCHOBJ = saprc99_Stochastic.o
 MAINSRC = saprc99_Main.f90   saprc99_Initialize.f90   saprc99_Integrator.f90 saprc99_Model.f90
 MAINOBJ = saprc99_Main.o     saprc99_Initialize.o     saprc99_Integrator.o   saprc99_Model.o 
 
+# MAINOBJ without Main itself
+SUBMAINSRC = saprc99_Initialize.f90   saprc99_Integrator.f90 saprc99_Model.f90
+SUBMAINOBJ = saprc99_Initialize.o     saprc99_Integrator.o   saprc99_Model.o 
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # User: modify the line below to include only the
 #       objects needed by your application
@@ -97,6 +101,13 @@ all:    exe
 
 exe:	$(ALLOBJ) $(MAINOBJ) 
 	$(FC) $(FOPT) $(ALLOBJ) $(MAINOBJ) $(LIBS) -o saprc99.exe
+
+# pack everything except MAINOBJ into a single static lib
+libmyutil.a: $(ALLOBJ) $(SUBMAINOBJ)
+	ar rsc $@ $^
+
+kpp4py: kpp4py_driver.f90 libmyutil.a
+	f2py -c -m $@ kpp4py_driver.f90 libmyutil.a
 
 stochastic:$(ALLOBJ) $(STOCHOBJ) $(MAINOBJ)
 	$(FC) $(FOPT) $(ALLOBJ) $(STOCHOBJ) $(MAINOBJ) $(LIBS) \
