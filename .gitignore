@@ -47,3 +47,6 @@ src/y.tab.h
 .ipynb_checkpoints
 __pycache__
 *.dSYM
+
+# figure
+*.png
